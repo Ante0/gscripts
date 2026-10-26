@@ -12,6 +12,32 @@ source "${SCRIPT_DIR}/config.sh"
 # Helpers
 ###############################################################################
 
+# Helper for determining workflow#
+
+case "$PROFILE" in
+    standard)
+        RELEASE_TAG="Nightly"
+        RELEASE_TITLE="Automated Nightly Build"
+        MATRIX_BRANCHES=(
+            17.0.0-cp2a
+            17.0.0-cp3a
+        )
+        ;;
+    lts)
+        RELEASE_TAG="Nightly-LTS"
+        RELEASE_TITLE="Automated Nightly LTS Build"
+        MATRIX_BRANCHES=(
+            17.0.0-cp3a-lts
+        )
+        ;;
+    *)
+        echo "ERROR: Unknown profile '$PROFILE'" >&2
+        exit 1
+        ;;
+esac
+
+# Github/gitlab #
+
 github_commit_info() {
     local repo="$1"
     local branch="$2"
@@ -56,7 +82,7 @@ trap 'rm -rf "$TMP"' EXIT
 NOTES_FILE="${TMP}/release_notes.md"
 
 cat >"$NOTES_FILE" <<EOF
-## Automated Nightly LTS Build
+## ${RELEASE_TITLE}
 
 This build was triggered by upstream changes.
 
@@ -71,10 +97,10 @@ if [[ -f "$LOCAL_JSON" ]]; then
     JSON_FILE="$LOCAL_JSON"
 fi
 
-if gh release view Nightly-LTS >/dev/null 2>&1; then
+if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
 
     ASSET_URL=$(
-        gh api repos/${GITHUB_REPOSITORY}/releases/tags/Nightly-LTS \
+        gh api "repos/${GITHUB_REPOSITORY}/releases/tags/${RELEASE_TAG}" \
             --jq '.assets[]
                 | select(.name=="nightly.json")
                 | .url'
@@ -83,7 +109,7 @@ if gh release view Nightly-LTS >/dev/null 2>&1; then
     if [[ -n "${ASSET_URL:-}" ]]; then
         gh api \
             -H "Accept: application/octet-stream" \
-            "${ASSET_URL}" > "${JSON_FILE}"
+            "$ASSET_URL" > "${JSON_FILE}"
     fi
 fi
 
@@ -240,23 +266,28 @@ fi
 # Generate matrix
 ###############################################################################
 
+
+###############################################################################
+# Generate matrix
+###############################################################################
+
 if ((${#BUILD_VARIANTS[@]} == 0)); then
     JSON='{"include":[]}'
 else
     JSON='{"include":['
     FIRST=true
 
-    for BRANCH in 17.0.0-cp3a-lts; do
-    for TARGET in "${TARGETS[@]}"; do
-        for VARIANT in "${BUILD_VARIANTS[@]}"; do
+    for BRANCH in "${MATRIX_BRANCHES[@]}"; do
+        for TARGET in "${TARGETS[@]}"; do
+            for VARIANT in "${BUILD_VARIANTS[@]}"; do
 
-            if $FIRST; then
-                FIRST=false
-            else
-                JSON+=","
-            fi
+                if $FIRST; then
+                    FIRST=false
+                else
+                    JSON+=","
+                fi
 
-            JSON+="{\"branch\":\"${BRANCH}\",\"target\":\"${TARGET}\",\"variant\":\"${VARIANT}\"}"
+                JSON+="{\"branch\":\"${BRANCH}\",\"target\":\"${TARGET}\",\"variant\":\"${VARIANT}\"}"
 
             done
         done
@@ -264,6 +295,7 @@ else
 
     JSON+="]}"
 fi
+
 
 ###############################################################################
 # Outputs
