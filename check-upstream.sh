@@ -13,6 +13,7 @@ source "${SCRIPT_DIR}/config.sh"
 ###############################################################################
 
 # Helper for determining workflow#
+PROFILE="${1:-standard}"
 
 case "$PROFILE" in
     standard)
