@@ -310,6 +310,7 @@ fi
     echo "susfs_sha=$NEW_SUSFS"
     echo "nomount_sha=$NEW_NOMOUNT"
     echo "vpnhide_sha=$NEW_VPNHIDE"
+    echo "release_tag=$RELEASE_TAG"
     echo "release_notes<<EOF"
     cat "$NOTES_FILE"
     echo "EOF"
