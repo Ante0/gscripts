@@ -91,6 +91,8 @@ readonly VPNHIDE_BRANCH="main"
 readonly OTG_SHIM_REPO="https://github.com/leegarchat/twrp_device_google_pixels"
 readonly OTG_SHIM_BRANCH="R12_16"
 
+readonly FGETPRIORITY_REPO="https://github.com/Ante0/fgetpriority"
+
 ###############################################################################
 # Release
 ###############################################################################
