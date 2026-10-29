@@ -124,7 +124,7 @@ clone_fgetpriority() {
 
 	git clone \
 		--depth=1 \
-		"${FGET_PRIORITY_REPO}"
+		"${FGETPRIORITY_REPO}"
 }
 
 clone_vpnhide() {
