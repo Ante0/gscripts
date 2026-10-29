@@ -119,6 +119,14 @@ clone_susfs() {
 		"${SUSFS_REPO}"
 }
 
+clone_fgetpriority() {
+	msg "Cloning fgetpriority sultan fork"
+
+	git clone \
+		--depth=1 \
+		"${FGET_PRIORITY_REPO}"
+}
+
 clone_vpnhide() {
         msg "Cloning VPNHide"
 
@@ -126,6 +134,17 @@ clone_vpnhide() {
                 --depth=1 \
                 -b "${VPNHIDE_BRANCH}" \
                 "${VPNHIDE_REPO}"
+}
+
+copy_fgetpriority() {
+	msg "Setting up fgetpriority"
+
+	mkdir -p drivers/fgetpriority
+	cp -r fgetpriority/kernel/* drivers/fgetpriority/
+
+	msg "Patching drivers/Makefile and drivers/Kconfig"
+	grep -q "fgetpriority" "drivers/Makefile" || printf "\nobj-\$(CONFIG_FGETPRIORITY) += fgetpriority/\n" >> "drivers/Makefile" && msg "fgetpriority: Makefile patched successfully"
+	grep -q "source \"drivers/fgetpriority/Kconfig\"" "drivers/Kconfig" || sed -i "/endmenu/i\source \"drivers/fgetpriority/Kconfig\"" "drivers/Kconfig" && msg "fgetpriority: Kconfig patched successfully"
 }
 
 install_ksu() {
@@ -370,6 +389,8 @@ clone_kernel_patches
 clone_sultan_patches
 clone_otg_shim
 patch_otg_shim
+clone_fgetpriority
+copy_fgetpriority
 
 case "$VARIANT" in
     ksu-susfs)
