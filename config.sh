@@ -93,6 +93,9 @@ readonly OTG_SHIM_BRANCH="R12_16"
 
 readonly FGETPRIORITY_REPO="https://github.com/Ante0/fgetpriority"
 
+readonly GSCRIPTS_REPO="https://github.com/Ante0/gscripts"
+readonly GSCRIPTS_BRANCH="main"
+
 ###############################################################################
 # Release
 ###############################################################################
