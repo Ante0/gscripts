@@ -130,6 +130,9 @@ IFS=$'\t' read -r NEW_SUSFS SUSFS_MSG \
 IFS=$'\t' read -r NEW_NOMOUNT NOMOUNT_MSG \
     < <(github_commit_info "$NOMOUNT_REPO" "$NOMOUNT_BRANCH" "kernel")
 
+IFS=$'\t' read -r NEW_GSCRIPTS GSCRIPTS_MSG \
+    < <(github_commit_info "$GSCRIPTS_REPO" "$GSCRIPTS_BRANCH")
+
 IFS=$'\t' read -r NEW_VPNHIDE VPNHIDE_MSG \
     < <(github_commit_info "$VPNHIDE_REPO" "$VPNHIDE_BRANCH" "builtin")
 
@@ -158,6 +161,7 @@ else
     OLD_NEXT="$(jq -r '.kernelsu_next' "${JSON_FILE}")"
     OLD_SUSFS="$(jq -r '.susfs' "${JSON_FILE}")"
     OLD_NOMOUNT="$(jq -r '.nomount' "${JSON_FILE}")"
+	OLD_GSCRIPTS="$(jq -r '.gscripts' "$JSON_FILE")"
     OLD_VPNHIDE="$(jq -r '.vpnhide' "${JSON_FILE}")"
 
     BUILD_VARIANTS=()
@@ -236,6 +240,21 @@ cat >>"$NOTES_FILE" <<EOF
 EOF
     fi
 
+### GSCRIPTS
+if [[ "${OLD_GSCRIPTS}" != "${NEW_GSCRIPTS}" ]]; then
+    BUILD_VARIANTS+=(ksu-susfs ksu-next-susfs ksu-susfs-vpnhide ksu-next-susfs-vpnhide)
+
+    SHORT_SHA="${NEW_GSCRIPTS:0:7}"
+
+    cat >>"$NOTES_FILE" <<EOF
+### GSCRIPTS
+
+- ${SHORT_SHA} — ${GSCRIPTS_MSG}
+
+EOF
+    fi
+
+### VPNHIDE
     if [[ "${OLD_VPNHIDE}" != "${NEW_VPNHIDE}" ]]; then
         BUILD_VARIANTS+=(ksu-susfs-vpnhide ksu-next-susfs-vpnhide)
 
@@ -309,6 +328,7 @@ fi
     echo "next_sha=$NEW_NEXT"
     echo "susfs_sha=$NEW_SUSFS"
     echo "nomount_sha=$NEW_NOMOUNT"
+	echo "gscripts_sha=$NEW_GSCRIPTS"
     echo "vpnhide_sha=$NEW_VPNHIDE"
     echo "release_tag=$RELEASE_TAG"
     echo "release_notes<<EOF"
