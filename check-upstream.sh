@@ -263,7 +263,7 @@ EOF
 cat >>"$NOTES_FILE" <<EOF
 ###VPNHide
 
-- ${SHORT_SHA} — ${NOMOUNT_MSG}
+- ${SHORT_SHA} — ${VPNHIDE_MSG}
 
 EOF
     fi
