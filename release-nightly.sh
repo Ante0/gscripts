@@ -46,7 +46,7 @@ cat > "${DIST_DIR}/nightly.json" <<EOF
   "kernelsu_next": "${NEXT_SHA}",
   "susfs": "${SUSFS_SHA}",
   "nomount": "${NOMOUNT_SHA}",
-  "gscripts": "${GSCRIPTS_SHA}"
+  "gscripts": "${GSCRIPTS_SHA}",
   "vpnhide": "${VPNHIDE_SHA}"
 }
 EOF
