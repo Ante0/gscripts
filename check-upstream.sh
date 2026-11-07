@@ -133,6 +133,9 @@ IFS=$'\t' read -r NEW_NOMOUNT NOMOUNT_MSG \
 IFS=$'\t' read -r NEW_GSCRIPTS GSCRIPTS_MSG \
     < <(github_commit_info "$GSCRIPTS_REPO" "$GSCRIPTS_BRANCH")
 
+IFS=$'\t' read -r NEW_PATCHES PATCHES_MSG \
+    < <(github_commit_info "$PATCHES_REPO" "main" "next")
+
 IFS=$'\t' read -r NEW_VPNHIDE VPNHIDE_MSG \
     < <(github_commit_info "$VPNHIDE_REPO" "$VPNHIDE_BRANCH" "builtin")
 
@@ -148,7 +151,7 @@ if [[ ! -f "${JSON_FILE}" ]]; then
     msg "First nightly run detected."
 
     BUILD_VARIANTS=(
-        	ksu-susfs
+        ksu-susfs
 		ksu-susfs-vpnhide
 		ksu-next-susfs
 		ksu-next-susfs-vpnhide
@@ -162,6 +165,7 @@ else
     OLD_SUSFS="$(jq -r '.susfs' "${JSON_FILE}")"
     OLD_NOMOUNT="$(jq -r '.nomount' "${JSON_FILE}")"
 	OLD_GSCRIPTS="$(jq -r '.gscripts' "$JSON_FILE")"
+	OLD_PATCHES="$(jq -r '.patches' "$JSON_FILE")"
     OLD_VPNHIDE="$(jq -r '.vpnhide' "${JSON_FILE}")"
 
     BUILD_VARIANTS=()
@@ -169,8 +173,8 @@ else
 ### SOURCE
 if [[ "${OLD_SOURCE}" != "${NEW_SOURCE}" ]]; then
     BUILD_VARIANTS+=(
-        	ksu-susfs
-        	ksu-next-susfs
+        ksu-susfs
+        ksu-next-susfs
 		ksu-susfs-vpnhide
 		ksu-next-susfs-vpnhide
     )
@@ -187,7 +191,10 @@ EOF
 
 ##KERNELSU
     if [[ "${OLD_KSU}" != "${NEW_KSU}" ]]; then
-        BUILD_VARIANTS+=(ksu-susfs ksu-susfs-vpnhide)
+        BUILD_VARIANTS+=(
+			ksu-susfs
+			ksu-susfs-vpnhide
+		)
 
         SHORT_SHA="${NEW_KSU:0:7}"
 
@@ -201,7 +208,10 @@ EOF
 
 ### KERNELSU-NEXT
     if [[ "${OLD_NEXT}" != "${NEW_NEXT}" ]]; then
-        BUILD_VARIANTS+=(ksu-next-susfs ksu-next-susfs-vpnhide)
+        BUILD_VARIANTS+=(
+			ksu-next-susfs
+			ksu-next-susfs-vpnhide
+		)
 
 	SHORT_SHA="${NEW_NEXT:0:7}"
 
@@ -215,7 +225,12 @@ EOF
 
 ###SUSFS
     if [[ "${OLD_SUSFS}" != "${NEW_SUSFS}" ]]; then
-        BUILD_VARIANTS+=(ksu-susfs ksu-next-susfs ksu-susfs-vpnhide ksu-next-susfs-vpnhide)
+        BUILD_VARIANTS+=(
+			ksu-susfs
+			ksu-next-susfs
+			ksu-susfs-vpnhide
+			ksu-next-susfs-vpnhide
+		)
 
 	SHORT_SHA="${NEW_SUSFS:0:7}"
 
@@ -228,7 +243,12 @@ EOF
     fi
 
     if [[ "${OLD_NOMOUNT}" != "${NEW_NOMOUNT}" ]]; then
-        BUILD_VARIANTS+=(ksu-susfs ksu-next-susfs ksu-susfs-vpnhide ksu-next-susfs-vpnhide)
+        BUILD_VARIANTS+=(
+			ksu-susfs
+			ksu-next-susfs
+			ksu-susfs-vpnhide
+			ksu-next-susfs-vpnhide
+		)
 
 	SHORT_SHA="${NEW_NOMOUNT:0:7}"
 
@@ -241,22 +261,47 @@ EOF
     fi
 
 ### GSCRIPTS
-if [[ "${OLD_GSCRIPTS}" != "${NEW_GSCRIPTS}" ]]; then
-    BUILD_VARIANTS+=(ksu-susfs ksu-next-susfs ksu-susfs-vpnhide ksu-next-susfs-vpnhide)
+	if [[ "${OLD_GSCRIPTS}" != "${NEW_GSCRIPTS}" ]]; then
+    	BUILD_VARIANTS+=(
+			ksu-susfs
+			ksu-next-susfs
+			ksu-susfs-vpnhide
+			ksu-next-susfs-vpnhide
+		)
 
     SHORT_SHA="${NEW_GSCRIPTS:0:7}"
 
     cat >>"$NOTES_FILE" <<EOF
-### GSCRIPTS
+###GSCRIPTS
 
 - ${SHORT_SHA} — ${GSCRIPTS_MSG}
 
 EOF
     fi
 
+### Patches
+	if [[ "${OLD_PATCHES}" != "${NEW_PATCHES}" ]]; then
+    	BUILD_VARIANTS+=(
+			ksu-next-susfs
+			ksu-next-susfs-vpnhide
+		)
+
+    SHORT_SHA="${NEW_PATCHES:0:7}"
+
+    cat >>"$NOTES_FILE" <<EOF
+###Patches
+
+- ${SHORT_SHA} — ${PATCHES_MSG}
+
+EOF
+    fi
+
 ### VPNHIDE
     if [[ "${OLD_VPNHIDE}" != "${NEW_VPNHIDE}" ]]; then
-        BUILD_VARIANTS+=(ksu-susfs-vpnhide ksu-next-susfs-vpnhide)
+        BUILD_VARIANTS+=(
+			ksu-susfs-vpnhide
+			ksu-next-susfs-vpnhide
+		)
 
         SHORT_SHA="${NEW_VPNHIDE:0:7}"
 
@@ -329,6 +374,7 @@ fi
     echo "susfs_sha=$NEW_SUSFS"
     echo "nomount_sha=$NEW_NOMOUNT"
 	echo "gscripts_sha=$NEW_GSCRIPTS"
+	echo "patches_sha=$NEW_PATCHES"
     echo "vpnhide_sha=$NEW_VPNHIDE"
     echo "release_tag=$RELEASE_TAG"
     echo "release_notes<<EOF"
