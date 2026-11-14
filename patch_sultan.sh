@@ -211,6 +211,11 @@ patch_susfs_ksu() {
 	apply_patch_optional \
 		"$KERNEL_REPO/KernelSU" \
 		"$KERNEL_REPO/susfs4ksu/kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch"
+
+	msg "Applying SUSFS KernelSU selinux_hide fix (temporary)"
+	apply_patch_optional \
+		"$KERNEL_REPO/KernelSU" \
+		"$KERNEL_REPO/kernel_patches/sultan/fix_selinux_hide.c.patch"
 }
 
 patch_susfs_ksu_next() {
@@ -227,6 +232,11 @@ patch_susfs_ksu_next() {
 	apply_patch_optional \
 		"$KERNEL_REPO/KernelSU-Next" \
 		"$KERNEL_REPO/susfs4ksu/kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch"
+
+	msg "Applying SUSFS KernelSU selinux_hide fix (temporary)"
+	apply_patch_optional \
+		"$KERNEL_REPO/KernelSU" \
+		"$KERNEL_REPO/kernel_patches/sultan/fix_selinux_hide.c.patch"
 
 	msg "Applying KernelSU-Next compatibility fixes"
 
