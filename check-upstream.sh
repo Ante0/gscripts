@@ -22,7 +22,6 @@ case "$PROFILE" in
         MATRIX_BRANCHES=(
             17.0.0-cp2a
             17.0.0-cp3a
-			17.0.0-cp4a
         )
         ;;
     lts)
@@ -30,7 +29,6 @@ case "$PROFILE" in
         RELEASE_TITLE="Automated Nightly LTS Build"
         MATRIX_BRANCHES=(
             17.0.0-cp3a-lts
-			17.0.0-cp4a-lts
         )
         ;;
     *)
