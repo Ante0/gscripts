@@ -235,7 +235,7 @@ patch_susfs_ksu_next() {
 
 	msg "Applying SUSFS KernelSU selinux_hide fix (temporary)"
 	apply_patch_optional \
-		"$KERNEL_REPO/KernelSU" \
+		"$KERNEL_REPO/KernelSU-Next" \
 		"$KERNEL_REPO/kernel_patches/sultan/fix_selinux_hide.c.patch"
 
 	msg "Applying KernelSU-Next compatibility fixes"
