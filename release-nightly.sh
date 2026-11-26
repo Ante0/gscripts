@@ -59,7 +59,7 @@ EOF
 
 if ! gh release view $RELEASE_TAG >/dev/null 2>&1; then
 
-    msg "Creating Nightly release"
+    msg "Creating release"
 
     gh release create $RELEASE_TAG \
         --title "$RELEASE_TAG" \
@@ -101,4 +101,4 @@ gh release edit $RELEASE_TAG \
 # Done
 ###############################################################################
 
-msg "Nightly release updated"
+msg "Release updated"
