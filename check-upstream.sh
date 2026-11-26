@@ -17,8 +17,8 @@ PROFILE="${1:-standard}"
 
 case "$PROFILE" in
     standard)
-        RELEASE_TAG="Nightly"
-        RELEASE_TITLE="Automated Nightly Build"
+        RELEASE_TAG="Every-other-day"
+        RELEASE_TITLE="Automated Build"
         MATRIX_BRANCHES=(
             17.0.0-cp2a
             17.0.0-cp3a
@@ -26,8 +26,8 @@ case "$PROFILE" in
         )
         ;;
     lts)
-        RELEASE_TAG="Nightly-LTS"
-        RELEASE_TITLE="Automated Nightly LTS Build"
+        RELEASE_TAG="Every-other-day-LTS"
+        RELEASE_TITLE="Automated LTS Build"
         MATRIX_BRANCHES=(
             17.0.0-cp3a-lts
 			17.0.0-cp4a-lts
@@ -150,7 +150,7 @@ SOURCE_MSG="$(git log -1 --pretty=%s)"
 
 if [[ ! -f "${JSON_FILE}" ]]; then
 
-    msg "First nightly run detected."
+    msg "First run detected."
 
     BUILD_VARIANTS=(
         ksu-susfs
